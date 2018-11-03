@@ -39,6 +39,9 @@ CREATE TABLE customer (
 			agent_id VARCHAR(2),
 			PRIMARY KEY (customer_id),
 			FOREIGN KEY (agent_id) REFERENCES agent(agent_id)
+			#Note: The default here is to throw an error if we 
+			#      attempt to delete an agent who is referenced
+			#      by a customer. This is exactly what we want.
 		      );
 CREATE TABLE purchase (
 			customer_id VARCHAR(2),
