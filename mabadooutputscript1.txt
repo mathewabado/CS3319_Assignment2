@@ -72,6 +72,9 @@ CREATE TABLE customer (
 			agent_id VARCHAR(2),
 			PRIMARY KEY (customer_id),
 			FOREIGN KEY (agent_id) REFERENCES agent(agent_id)
+			
+			
+			
 		      )
 --------------
 
