@@ -30,10 +30,10 @@ SELECT * FROM purchase_details WHERE total_cost > 100;
 DELETE FROM product WHERE description = 'Skateboard';
 SELECT * FROM product;
 
+DELETE FROM agent WHERE city = 'Springfield';
 #This is the command to delete all agents from Springfield.
 #It will not work, however, because it violates a foreign key constraint.
 #We set the database up such that if we try to delete and agent that has any customers, we throw an error.
 #In this case, agent Hugh Grant is from Springfield, so we try to delete him,
 #but he has three customers (Homer, Monty, and Peter) whose foreign keys reference him, so the delete fails, just as we hoped.
-DELETE FROM agent WHERE city = 'Springfield';
 
