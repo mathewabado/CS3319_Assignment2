@@ -1,0 +1,236 @@
+Warning: Using a password on the command line interface can be insecure.
+--------------
+SELECT description FROM product
+--------------
+
+description
+Bike
+Socks
+Elbow pads
+Skateboard
+Knee Pads
+Roller Blades
+Helmet
+--------------
+SELECT DISTINCT(city) FROM customer
+--------------
+
+city
+Boston
+Springfield
+Kypto
+Providence
+--------------
+SELECT * FROM agent ORDER BY city
+--------------
+
+agent_id	first_name	last_name	city	commission_pct
+33	David	Letterman	Bedrock	100
+11	Regis	Philbin	Boston	33
+00	Mathew	Abado	London	100
+22	Courtney	Cox	New York	25
+12	Rosie	Cox	Ottawa	50
+66	Rosie	ODonnell	Ottawa	100
+99	Hugh	Grant	Springfield	16
+--------------
+SELECT
+	first_name,
+	last_name
+FROM
+	customer
+WHERE
+	city = 'Springfield'
+--------------
+
+first_name	last_name
+Monty	Burns
+Homer	Simpson
+Sideshow	Bob
+--------------
+SELECT
+	c.last_name
+FROM
+	customer AS c
+	INNER JOIN agent AS a
+	ON a.agent_id = c.agent_id
+WHERE
+	a.first_name = 'Regis'
+--------------
+
+last_name
+Rubble
+Flintstone
+--------------
+SELECT 
+	description 
+FROM 
+	product 
+WHERE 
+	description LIKE '%pad%' 
+	OR description LIKE '%Pad%'
+--------------
+
+description
+Elbow pads
+Knee Pads
+--------------
+SELECT
+	c.last_name,
+	pr.description,
+	p.quantity
+FROM
+	customer AS c
+	INNER JOIN purchase AS p
+	ON p.customer_id = c.customer_id
+	INNER JOIN product AS pr
+	ON pr.product_id = p.product_id
+--------------
+
+last_name	description	quantity
+Griffens	Elbow pads	19
+Flintstone	Elbow pads	2
+Flintstone	Knee Pads	2
+Simpson	Socks	14
+Simpson	Elbow pads	10
+Simpson	Helmet	20
+Bob	Socks	5
+Bob	Elbow pads	5
+Bob	Knee Pads	5
+Bob	Helmet	5
+--------------
+SELECT
+	SUM(p.quantity) AS 'Homer\'s Total Purchases'
+FROM
+	purchase AS p
+	INNER JOIN customer AS c
+	ON c.customer_id = p.customer_id
+WHERE
+	c.first_name = 'Homer'
+--------------
+
+Homer's Total Purchases
+44
+--------------
+SELECT
+	c.first_name,
+	c.last_name,
+	SUM(p.quantity)
+FROM
+	purchase AS p
+	INNER JOIN customer AS c
+	ON c.customer_id = p.customer_id
+GROUP BY
+	c.customer_id
+--------------
+
+first_name	last_name	SUM(p.quantity)
+Peter	Griffens	19
+Fred	Flintstone	4
+Homer	Simpson	44
+Sideshow	Bob	20
+--------------
+SELECT
+	pr.description,
+	pr.items_on_hand	
+FROM
+	product AS pr
+WHERE
+	pr.product_id NOT IN (SELECT product_id FROM purchase)
+--------------
+
+description	items_on_hand
+Bike	200
+Skateboard	47
+Roller Blades	89
+--------------
+SELECT
+	pr.description,
+	pr.items_on_hand	
+FROM
+	product AS pr
+WHERE
+	pr.product_id NOT IN (
+		SELECT 
+			p.product_id 
+		FROM 
+			purchase AS p
+			INNER JOIN customer AS c
+			ON c.customer_id = p.customer_id	
+		WHERE
+			c.first_name = 'Fred'
+			AND c.last_name = 'Flintstone'
+	)
+--------------
+
+description	items_on_hand
+Bike	200
+Socks	100
+Skateboard	47
+Roller Blades	89
+Helmet	30
+--------------
+SELECT
+	a.first_name AS agent_fname,
+	a.last_name AS agent_lname,
+	c.first_name AS customer_fname,
+	c.last_name AS customer_lname
+FROM
+	agent AS a
+	INNER JOIN customer as c
+	ON c.agent_id = a.agent_id
+WHERE
+	c.city = a.city
+--------------
+
+agent_fname	agent_lname	customer_fname	customer_lname
+Regis	Philbin	Barney	Rubble
+Regis	Philbin	Fred	Flintstone
+Hugh	Grant	Monty	Burns
+Hugh	Grant	Homer	Simpson
+--------------
+SELECT
+	SUM(p.quantity) AS 'Total Knee Pads Purchased'
+FROM
+	purchase AS p
+WHERE
+	p.product_id IN (SELECT product_id FROM product WHERE description = 'Knee Pads')
+--------------
+
+Total Knee Pads Purchased
+7
+--------------
+SELECT
+	pr.description
+FROM
+	product AS pr
+	INNER JOIN purchase AS p
+	ON p.product_id = pr.product_id
+	INNER JOIN customer AS c
+	ON c.customer_id = p.customer_id
+GROUP BY
+	pr.description
+HAVING
+	COUNT(DISTINCT c.customer_id) > 3
+--------------
+
+description
+Elbow pads
+--------------
+SELECT
+	a.first_name,
+	a.last_name
+FROM
+	agent AS a
+	INNER JOIN customer AS c
+	ON c.agent_id = a.agent_id
+	INNER JOIN purchase AS p
+	ON p.customer_id = c.customer_id
+	INNER JOIN product AS pr
+	ON pr.product_id = p.product_id
+WHERE
+	pr.description = 'Knee Pads'
+--------------
+
+first_name	last_name
+Regis	Philbin
+Rosie	ODonnell

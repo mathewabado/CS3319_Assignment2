@@ -1,0 +1,102 @@
+USE mabadoassign2db;
+
+#Load some data from file.
+LOAD DATA LOCAL INFILE 
+	'loaddatafall2018.txt' 
+INTO TABLE 
+	product 
+FIELDS TERMINATED BY 
+	',';
+
+#Insert the rest of the data.
+INSERT INTO product (product_id, description, cost_each, items_on_hand) 
+	    VALUES  ('66', 'Elbow pads', 14.25, 120),
+	            ('67', 'Skateboard', 99.99, 47);
+
+INSERT INTO agent   (agent_id, first_name, last_name, city, commission_pct) 
+	    VALUES  ('99', 'Hugh', 'Grant', 'Springfield', 16),
+	            ('22', 'Courtney', 'Cox', 'New York', 25),
+	            ('66', 'Rosie', 'ODonnell', 'Ottawa', 100),
+	            ('33', 'David', 'Letterman', 'Bedrock', 100),
+	            ('11', 'Regis', 'Philbin', 'Boston', 33),
+	            ('12', 'Rosie', 'Cox',  'Ottawa', 50),
+	            ('00', 'Mathew', 'Abado', 'London', 100);
+
+INSERT INTO customer (customer_id, first_name, last_name, city, phone_number, agent_id) 
+	    VALUES   ('21', 'Homer', 'Simpson', 'Springfield', '686-8956', '99'),
+	             ('31', 'Sideshow', 'Bob', 'Springfield', '686-5555', '66'),
+	             ('12', 'Monty', 'Burns', 'Springfield', '789-0000', '99'),
+	             ('15', 'Fred', 'Flintstone', 'Bedrock', '777-2345', '11'),
+	             ('13', 'Super', 'Man', 'Kypto', '888-1234', '33'),
+	             ('10', 'Barney', 'Rubble', 'Bedrock', '777-1234', '11'),
+	             ('14', 'Peter', 'Griffens', 'Providence', '987-4567', '99');
+
+INSERT INTO purchase (customer_id, product_id, quantity)
+	    VALUES   ('21', '99', 20),
+	             ('21', '12', 14),
+	             ('21', '66', 10),
+	             ('31', '99', 1),
+	             ('31', '12', 2),
+	             ('31', '78', 4),
+	             ('31', '66', 2),
+	             ('15', '66', 2),
+	             ('15', '78', 2),
+	             ('14', '66', 19);
+
+#Show all our data.
+SELECT * FROM product;
+SELECT * FROM agent;
+SELECT * FROM customer;
+SELECT * FROM purchase;
+
+#Rename Superman.
+UPDATE 
+	customer 
+SET 
+	first_name = 'Wonder',
+	last_name = 'Woman'
+WHERE 
+	first_name = 'Super' 
+	AND last_name = 'Man';
+
+#Show the updated customer table.
+SELECT * FROM customer;
+
+#Update Sideshow Bob's purchases to all have quantity = 5.
+UPDATE 
+	purchase AS p
+	INNER JOIN customer AS c
+	ON p.customer_id = c.customer_id
+SET 
+	quantity = 5
+WHERE 
+	c.first_name = 'Sideshow';
+
+#Show the updated purchase table with some extra details to be easier to read.
+SELECT 
+	c.first_name, 
+	pr.description, 
+	p.quantity
+FROM
+	customer AS c
+	INNER JOIN purchase AS p
+	ON c.customer_id = p.customer_id
+	INNER JOIN product AS pr
+	ON pr.product_id = p.product_id;
+
+
+#Update Regis' customers to be from Boston.
+UPDATE 
+	customer
+SET 
+	city = 'Boston'
+WHERE 
+	agent_id IN (
+		SELECT agent_id FROM agent WHERE first_name = 'Regis'
+	);
+
+#Show all our data.
+SELECT * FROM product;
+SELECT * FROM agent;
+SELECT * FROM customer;
+SELECT * FROM purchase;

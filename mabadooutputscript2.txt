@@ -1,0 +1,223 @@
+Warning: Using a password on the command line interface can be insecure.
+--------------
+LOAD DATA LOCAL INFILE 
+	'loaddatafall2018.txt' 
+INTO TABLE 
+	product 
+FIELDS TERMINATED BY 
+	','
+--------------
+
+--------------
+INSERT INTO product (product_id, description, cost_each, items_on_hand) 
+	    VALUES  ('66', 'Elbow pads', 14.25, 120),
+	            ('67', 'Skateboard', 99.99, 47)
+--------------
+
+--------------
+INSERT INTO agent   (agent_id, first_name, last_name, city, commission_pct) 
+	    VALUES  ('99', 'Hugh', 'Grant', 'Springfield', 16),
+	            ('22', 'Courtney', 'Cox', 'New York', 25),
+	            ('66', 'Rosie', 'ODonnell', 'Ottawa', 100),
+	            ('33', 'David', 'Letterman', 'Bedrock', 100),
+	            ('11', 'Regis', 'Philbin', 'Boston', 33),
+	            ('12', 'Rosie', 'Cox',  'Ottawa', 50),
+	            ('00', 'Mathew', 'Abado', 'London', 100)
+--------------
+
+--------------
+INSERT INTO customer (customer_id, first_name, last_name, city, phone_number, agent_id) 
+	    VALUES   ('21', 'Homer', 'Simpson', 'Springfield', '686-8956', '99'),
+	             ('31', 'Sideshow', 'Bob', 'Springfield', '686-5555', '66'),
+	             ('12', 'Monty', 'Burns', 'Springfield', '789-0000', '99'),
+	             ('15', 'Fred', 'Flintstone', 'Bedrock', '777-2345', '11'),
+	             ('13', 'Super', 'Man', 'Kypto', '888-1234', '33'),
+	             ('10', 'Barney', 'Rubble', 'Bedrock', '777-1234', '11'),
+	             ('14', 'Peter', 'Griffens', 'Providence', '987-4567', '99')
+--------------
+
+--------------
+INSERT INTO purchase (customer_id, product_id, quantity)
+	    VALUES   ('21', '99', 20),
+	             ('21', '12', 14),
+	             ('21', '66', 10),
+	             ('31', '99', 1),
+	             ('31', '12', 2),
+	             ('31', '78', 4),
+	             ('31', '66', 2),
+	             ('15', '66', 2),
+	             ('15', '78', 2),
+	             ('14', '66', 19)
+--------------
+
+--------------
+SELECT * FROM product
+--------------
+
+product_id	description	cost_each	items_on_hand
+11	Bike	150	200
+12	Socks	2	100
+66	Elbow pads	14.25	120
+67	Skateboard	99.99	47
+78	Knee Pads	12.15	70
+88	Roller Blades	75	89
+99	Helmet	29	30
+--------------
+SELECT * FROM agent
+--------------
+
+agent_id	first_name	last_name	city	commission_pct
+00	Mathew	Abado	London	100
+11	Regis	Philbin	Boston	33
+12	Rosie	Cox	Ottawa	50
+22	Courtney	Cox	New York	25
+33	David	Letterman	Bedrock	100
+66	Rosie	ODonnell	Ottawa	100
+99	Hugh	Grant	Springfield	16
+--------------
+SELECT * FROM customer
+--------------
+
+customer_id	first_name	last_name	city	phone_number	agent_id
+10	Barney	Rubble	Bedrock	777-1234	11
+12	Monty	Burns	Springfield	789-0000	99
+13	Super	Man	Kypto	888-1234	33
+14	Peter	Griffens	Providence	987-4567	99
+15	Fred	Flintstone	Bedrock	777-2345	11
+21	Homer	Simpson	Springfield	686-8956	99
+31	Sideshow	Bob	Springfield	686-5555	66
+--------------
+SELECT * FROM purchase
+--------------
+
+customer_id	product_id	quantity
+14	66	19
+15	66	2
+15	78	2
+21	12	14
+21	66	10
+21	99	20
+31	12	2
+31	66	2
+31	78	4
+31	99	1
+--------------
+UPDATE 
+	customer 
+SET 
+	first_name = 'Wonder',
+	last_name = 'Woman'
+WHERE 
+	first_name = 'Super' 
+	AND last_name = 'Man'
+--------------
+
+--------------
+SELECT * FROM customer
+--------------
+
+customer_id	first_name	last_name	city	phone_number	agent_id
+10	Barney	Rubble	Bedrock	777-1234	11
+12	Monty	Burns	Springfield	789-0000	99
+13	Wonder	Woman	Kypto	888-1234	33
+14	Peter	Griffens	Providence	987-4567	99
+15	Fred	Flintstone	Bedrock	777-2345	11
+21	Homer	Simpson	Springfield	686-8956	99
+31	Sideshow	Bob	Springfield	686-5555	66
+--------------
+UPDATE 
+	purchase AS p
+	INNER JOIN customer AS c
+	ON p.customer_id = c.customer_id
+SET 
+	quantity = 5
+WHERE 
+	c.first_name = 'Sideshow'
+--------------
+
+--------------
+SELECT 
+	c.first_name, 
+	pr.description, 
+	p.quantity
+FROM
+	customer AS c
+	INNER JOIN purchase AS p
+	ON c.customer_id = p.customer_id
+	INNER JOIN product AS pr
+	ON pr.product_id = p.product_id
+--------------
+
+first_name	description	quantity
+Peter	Elbow pads	19
+Fred	Elbow pads	2
+Fred	Knee Pads	2
+Homer	Socks	14
+Homer	Elbow pads	10
+Homer	Helmet	20
+Sideshow	Socks	5
+Sideshow	Elbow pads	5
+Sideshow	Knee Pads	5
+Sideshow	Helmet	5
+--------------
+UPDATE 
+	customer
+SET 
+	city = 'Boston'
+WHERE 
+	agent_id IN (
+		SELECT agent_id FROM agent WHERE first_name = 'Regis'
+	)
+--------------
+
+--------------
+SELECT * FROM product
+--------------
+
+product_id	description	cost_each	items_on_hand
+11	Bike	150	200
+12	Socks	2	100
+66	Elbow pads	14.25	120
+67	Skateboard	99.99	47
+78	Knee Pads	12.15	70
+88	Roller Blades	75	89
+99	Helmet	29	30
+--------------
+SELECT * FROM agent
+--------------
+
+agent_id	first_name	last_name	city	commission_pct
+00	Mathew	Abado	London	100
+11	Regis	Philbin	Boston	33
+12	Rosie	Cox	Ottawa	50
+22	Courtney	Cox	New York	25
+33	David	Letterman	Bedrock	100
+66	Rosie	ODonnell	Ottawa	100
+99	Hugh	Grant	Springfield	16
+--------------
+SELECT * FROM customer
+--------------
+
+customer_id	first_name	last_name	city	phone_number	agent_id
+10	Barney	Rubble	Boston	777-1234	11
+12	Monty	Burns	Springfield	789-0000	99
+13	Wonder	Woman	Kypto	888-1234	33
+14	Peter	Griffens	Providence	987-4567	99
+15	Fred	Flintstone	Boston	777-2345	11
+21	Homer	Simpson	Springfield	686-8956	99
+31	Sideshow	Bob	Springfield	686-5555	66
+--------------
+SELECT * FROM purchase
+--------------
+
+customer_id	product_id	quantity
+14	66	19
+15	66	2
+15	78	2
+21	12	14
+21	66	10
+21	99	20
+31	12	5
+31	66	5
+31	78	5
+31	99	5

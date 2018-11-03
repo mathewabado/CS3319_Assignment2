@@ -1,0 +1,39 @@
+USE mabadoassign2db;
+
+#Show data first.
+SELECT * FROM product;
+SELECT * FROM agent;
+SELECT * FROM customer;
+SELECT * FROM purchase;
+
+#Create a more detailed purchase view.
+CREATE OR REPLACE VIEW purchase_details AS
+SELECT
+	c.first_name,
+	c.last_name,
+	pr.description,
+	p.quantity,
+	pr.cost_each,
+	p.quantity * pr.cost_each AS total_cost
+FROM
+	customer AS c
+	INNER JOIN purchase AS p
+	ON p.customer_id = c.customer_id
+	INNER JOIN product AS pr
+	ON pr.product_id = p.product_id;
+
+#Use the new purchase view for a few things.
+SELECT * FROM purchase_details;
+SELECT * FROM purchase_details WHERE total_cost > 100;
+
+#Delete the product I made up and prove it worked.
+DELETE FROM product WHERE description = 'Skateboard';
+SELECT * FROM product;
+
+#This is the command to delete all agents from Springfield.
+#It will not work, however, because it violates a foreign key constraint.
+#We set the database up such that if we try to delete and agent that has any customers, we throw an error.
+#In this case, agent Hugh Grant is from Springfield, so we try to delete him,
+#but he has three customers (Homer, Monty, and Peter) whose foreign keys reference him, so the delete fails, just as we hoped.
+DELETE FROM agent WHERE city = 'Springfield';
+

@@ -1,0 +1,165 @@
+USE mabadoassign2db;
+
+#Query 1:
+#Description of all products.
+SELECT description FROM product;
+
+#Query 2:
+#All customer cities, no repeats.
+SELECT DISTINCT(city) FROM customer;
+
+#Query 3:
+#All agent data, ordered by city.
+SELECT * FROM agent ORDER BY city;
+
+#Query 4:
+#First and last name of all customers from Springfield.
+SELECT
+	first_name,
+	last_name
+FROM
+	customer
+WHERE
+	city = 'Springfield';
+
+#Query 5:
+#Last name of call customers dealing with Regis.
+SELECT
+	c.last_name
+FROM
+	customer AS c
+	INNER JOIN agent AS a
+	ON a.agent_id = c.agent_id
+WHERE
+	a.first_name = 'Regis';
+
+#Query 6:
+#Description of products containing "pad" or "Pad".
+SELECT 
+	description 
+FROM 
+	product 
+WHERE 
+	description LIKE '%pad%' 
+	OR description LIKE '%Pad%';
+
+#Query 7:
+#Last names of customers who have bought products, the product descriptions, and the quantities purchased.
+SELECT
+	c.last_name,
+	pr.description,
+	p.quantity
+FROM
+	customer AS c
+	INNER JOIN purchase AS p
+	ON p.customer_id = c.customer_id
+	INNER JOIN product AS pr
+	ON pr.product_id = p.product_id;
+
+#Query 8:
+#Total number of products purchased by Homer.
+SELECT
+	SUM(p.quantity) AS 'Homer\'s Total Purchases'
+FROM
+	purchase AS p
+	INNER JOIN customer AS c
+	ON c.customer_id = p.customer_id
+WHERE
+	c.first_name = 'Homer';
+
+#Query 9:
+#Total number of products purchased by customers who have purchased products, along with their first and last names.
+SELECT
+	c.first_name,
+	c.last_name,
+	SUM(p.quantity)
+FROM
+	purchase AS p
+	INNER JOIN customer AS c
+	ON c.customer_id = p.customer_id
+GROUP BY
+	c.customer_id;
+
+#Query 10:
+#Description and quantity on hand of items that have never been purchased.
+SELECT
+	pr.description,
+	pr.items_on_hand	
+FROM
+	product AS pr
+WHERE
+	pr.product_id NOT IN (SELECT product_id FROM purchase);
+
+#Query 11:
+#Description and quantity on hand of items that have not been purchased by Fred Flintstone.
+SELECT
+	pr.description,
+	pr.items_on_hand	
+FROM
+	product AS pr
+WHERE
+	pr.product_id NOT IN (
+		SELECT 
+			p.product_id 
+		FROM 
+			purchase AS p
+			INNER JOIN customer AS c
+			ON c.customer_id = p.customer_id	
+		WHERE
+			c.first_name = 'Fred'
+			AND c.last_name = 'Flintstone'
+	);
+
+#Query 12:
+#First and last names of agents and customers where the agent deals with a customer from the same city.
+SELECT
+	a.first_name AS agent_fname,
+	a.last_name AS agent_lname,
+	c.first_name AS customer_fname,
+	c.last_name AS customer_lname
+FROM
+	agent AS a
+	INNER JOIN customer as c
+	ON c.agent_id = a.agent_id
+WHERE
+	c.city = a.city;
+
+#Query 13:
+#Total number of knee pads that have been purchased.
+SELECT
+	SUM(p.quantity) AS 'Total Knee Pads Purchased'
+FROM
+	purchase AS p
+WHERE
+	p.product_id IN (SELECT product_id FROM product WHERE description = 'Knee Pads');
+
+#Query 14:
+#Description of products that have been purchased by more than 3 customers.
+SELECT
+	pr.description
+FROM
+	product AS pr
+	INNER JOIN purchase AS p
+	ON p.product_id = pr.product_id
+	INNER JOIN customer AS c
+	ON c.customer_id = p.customer_id
+GROUP BY
+	pr.description
+HAVING
+	COUNT(DISTINCT c.customer_id) > 3;
+
+#Query 15:
+#First and last name of agents who deal with customers who have purchased knee pads.
+SELECT
+	a.first_name,
+	a.last_name
+FROM
+	agent AS a
+	INNER JOIN customer AS c
+	ON c.agent_id = a.agent_id
+	INNER JOIN purchase AS p
+	ON p.customer_id = c.customer_id
+	INNER JOIN product AS pr
+	ON pr.product_id = p.product_id
+WHERE
+	pr.description = 'Knee Pads';

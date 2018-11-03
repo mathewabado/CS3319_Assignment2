@@ -1,0 +1,97 @@
+Warning: Using a password on the command line interface can be insecure.
+--------------
+SHOW DATABASES
+--------------
+
+Database
+information_schema
+mabadoassign2db
+myfirstdb
+mysql
+performance_schema
+--------------
+DROP DATABASE IF EXISTS mabadoassign2db
+--------------
+
+--------------
+CREATE DATABASE mabadoassign2db
+--------------
+
+--------------
+GRANT USAGE ON *.* TO 'ta'@'localhost'
+--------------
+
+--------------
+DROP USER 'ta'@'localhost'
+--------------
+
+--------------
+CREATE USER 'ta'@'localhost' IDENTIFIED BY 'cs3319'
+--------------
+
+--------------
+GRANT ALL PRIVILEGES ON mabadoassign2db.* TO 'ta'@'localhost'
+--------------
+
+--------------
+FLUSH PRIVILEGES
+--------------
+
+--------------
+SHOW TABLES
+--------------
+
+--------------
+CREATE TABLE product (
+			product_id VARCHAR(2), 
+			description VARCHAR(20), 
+			cost_each FLOAT, 
+			items_on_hand INT,
+			PRIMARY KEY (product_id)
+		     )
+--------------
+
+--------------
+CREATE TABLE agent (
+			agent_id VARCHAR(2), 
+			first_name VARCHAR(30), 
+			last_name VARCHAR(30), 
+			city VARCHAR(15), 
+			commission_pct FLOAT,
+			PRIMARY KEY (agent_id)
+		   )
+--------------
+
+--------------
+CREATE TABLE customer (
+			customer_id VARCHAR(2), 
+			first_name VARCHAR(30), 
+			last_name VARCHAR(30), 
+			city VARCHAR(15), 
+			phone_number VARCHAR(15),
+			agent_id VARCHAR(2),
+			PRIMARY KEY (customer_id),
+			FOREIGN KEY (agent_id) REFERENCES agent(agent_id)
+		      )
+--------------
+
+--------------
+CREATE TABLE purchase (
+			customer_id VARCHAR(2),
+			product_id VARCHAR(2),
+			quantity INT,	
+			PRIMARY KEY (customer_id, product_id),
+			FOREIGN KEY (customer_id) REFERENCES customer(customer_id),	
+			FOREIGN KEY (product_id) REFERENCES product(product_id)
+		      )
+--------------
+
+--------------
+SHOW TABLES
+--------------
+
+Tables_in_mabadoassign2db
+agent
+customer
+product
+purchase
